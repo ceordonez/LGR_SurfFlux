@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import os
 import pdb
@@ -9,6 +10,8 @@ import pdb
 from pandas.plotting import register_matplotlib_converters
 from decimal import Decimal
 register_matplotlib_converters()
+mpl.use('tkAgg')
+
 
 def plot_select_points(rfile, n):
 
@@ -19,17 +22,17 @@ def plot_select_points(rfile, n):
     fig,ax1 = plt.subplots(1,1,figsize=(25,10))
     ax2=ax1.twinx()
     ax1.plot(rfile[cdata1],'b',linewidth=3)
-    ax2.plot(rfile[cdata2],'r',linewidth=3)
+    ax2.plot(rfile[cdata2],'k',linewidth=3)
     #ax1.set_ylim(1,10)
     ax1.set_ylabel('CH4 (ppm)')
     ax2.set_ylabel('CO2 (ppm)')
     ax1.yaxis.label.set_color('b')
-    ax2.yaxis.label.set_color('r')
+#    ax2.yaxis.label.set_color('r')
     ax1.spines['left'].set_color('b')
-    ax2.spines['right'].set_color('r')
+#    ax2.spines['right'].set_color('r')
     ax2.spines['left'].set_visible(False)
     ax1.tick_params(axis='y', which='both',colors='b')
-    ax2.tick_params(axis='y', which='both',colors='r')
+#    ax2.tick_params(axis='y', which='both',colors='r')
     pts = plt.ginput(2*n,timeout=-1) # select points from plot
     return pts
 

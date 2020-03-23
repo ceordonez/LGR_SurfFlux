@@ -20,6 +20,5 @@ def main():
 
     plot_alldata(DataLGR, Results, path_out, lake, var, txtfile, date, cdata)
 
-
 if __name__ == '__main__':
     main()
