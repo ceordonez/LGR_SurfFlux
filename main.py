@@ -10,10 +10,11 @@ from src.write import write_excelres
 def main():
     DataLGR = read_data(path_in, lake, date, txtfile)
 
-    Pts_selected = plot_select_points(DataLGR, n)
+    pts_sel = plot_select_points(DataLGR, var)
 
-    Results, p1, cdata = processing_data(Pts_selected, DataLGR, n, Temp, Press, Vol, Area,
-                              var)
+    Results, p1, cdata = processing_data(pts_sel, DataLGR, Temp, Press, Vol,
+            Area, var)
+
     plot_perflux(DataLGR, Results, p1, cdata, path_out, lake, txtfile, date, var)
 
     write_excelres(path_out, var, lake, txtfile, DataLGR, cdata, Results)

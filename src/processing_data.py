@@ -6,7 +6,7 @@ import numpy as np
 from scipy import stats
 from matplotlib.dates import date2num
 
-def processing_data(pts, rfile, n, Temp, Press, Vol, Area, var):
+def processing_data(pts, rfile, Temp, Press, Vol, Area, var):
 
     Tk = Temp + 273.15
     M = 8.31451*Tk/(Press*100)*1000 #Molar Volume (L/mol)
@@ -20,7 +20,7 @@ def processing_data(pts, rfile, n, Temp, Press, Vol, Area, var):
     cdata = rfile.keys()[nvar]
 
     # Create matrix to save the results
-    points = pd.DataFrame(index=range(n),
+    points = pd.DataFrame(index=range(len(pts[0][::2])),
                         columns=['FID','ID start', 'ID end', 'Time start', 'Time end',
                                 'Value start (ppm)', 'Value end (ppm)', 'Slope (ppm/s)',
                                 'Res', 'R2','Flux (mmol/m2/d)','Temp','Press'])
@@ -28,9 +28,9 @@ def processing_data(pts, rfile, n, Temp, Press, Vol, Area, var):
     points['Temp'][0] = Temp
     points['Press'][0] = Press
     p1 = []
-    for pt in range(n):
-        idx1 = abs((date2num(time)-pts[2*pt][0])).argmin()
-        idx2 = abs((date2num(time)-pts[2*pt+1][0])).argmin()
+    for pt in range(len(pts[0][::2])):
+        idx1 = abs((time-pts[0][2*pt])).argmin()
+        idx2 = abs((time-pts[0][2*pt+1])).argmin()
         points['ID start'][pt] = idx1
         points['ID end'][pt] = idx2
         points['Time start'][pt] = time[idx1]
