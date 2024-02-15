@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from config_file import *
-from src.read_data import read_data
-from src.plots import plot_select_points, plot_perflux, plot_alldata
+#from config_file import *
+from src.read_data import read_data, read_config
+from src.plots import plot_data
 from src.processing_data import processing_data
 from src.write import write_excelres
 
 def main():
-    DataLGR = read_data(path_in, lake, date, txtfile)
 
-    pts_sel = plot_select_points(DataLGR, var)
+    cfg = read_config('config_flgr.yml')
 
-    Results, p1, cdata = processing_data(pts_sel, DataLGR, Temp, Press, Vol,
-            Area, var)
+    ## STEP 1: Read data
+    data = read_data(cfg)
 
-    plot_perflux(DataLGR, Results, p1, cdata, path_out, lake, txtfile, date, var)
+    ## STEP 2: Processing data
+    results, p1, cdata = processing_data(data, cfg)
 
-    write_excelres(path_out, var, lake, txtfile, DataLGR, cdata, Results)
+    plot_data(data, results, p1, cdata, cfg)
 
-    plot_alldata(DataLGR, Results, path_out, lake, var, txtfile, date, cdata)
+    write_excelres(data, results, cdata, cfg)
+
 
 if __name__ == '__main__':
     main()

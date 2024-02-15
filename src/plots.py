@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import os
-import pdb
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.dates import date2num, num2date
-import numpy as np
+from decimal import Decimal
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.dates import date2num, num2date
 from matplotlib.widgets import Cursor
 from pandas.plotting import register_matplotlib_converters
-from decimal import Decimal
+
 register_matplotlib_converters()
 mpl.use('tkAgg')
 
@@ -19,13 +19,36 @@ sc = []
 pts = []
 xydata_b = []
 
-def plot_select_points(rfile, var):
+def plot_data(data, results, p1, cdata, cfg):
+    """TODO: Docstring for plot_data.
 
-    cdata1 = rfile.keys()[0]
-    cdata2 = rfile.keys()[1]
+    Parameters
+    ----------
+    data : TODO
+    results : TODO
+    p1 : TODO
+    cfg : TODO
+    cdata : TODO
+
+    Returns
+    -------
+    TODO
+
+    """
+    plot_perflux(data, results, p1, cdata, cfg)
+    plot_alldata(data, results, cdata, cfg)
+
+def plot_select_points(data, cfg):
+
+    ylim_max = cfg['Plot']['ylim_max']
+    ylim_min = cfg['Plot']['ylim_min']
+    var = cfg['variable']
+
+    cdata1 = data.keys()[0]
+    cdata2 = data.keys()[1]
     pts = []
+
     # Creating plot to select points per flux
-    #fig = plt.figure(figsize=(25, 10))
     fig = plt.figure(figsize=(15, 5))
     ax1 = fig.add_subplot(111, facecolor='#FFFFCC')
     ax2 = ax1.twinx()
@@ -36,28 +59,41 @@ def plot_select_points(rfile, var):
     global line
     global sc
     if var == 'CO2':
-        ax1.plot(rfile[cdata1], 'b', linewidth=3)
-        line = ax2.plot(rfile[cdata2], 'k', linewidth=3, picker=5)[0]
+        ax1.plot(data[cdata1], 'b', linewidth=3)
+        line = ax2.plot(data[cdata2], 'k', linewidth=3, picker=5)[0]
         ax1.set_ylabel('CH4 (ppm)')
         ax2.set_ylabel('CO2 (ppm)')
         ax1.yaxis.label.set_color('b')
         ax1.spines['left'].set_color('b')
         ax1.tick_params(axis='y', which='both', colors='b')
-        xdata = rfile.index.values
+        xdata = data.index.values
         ydata = [None, None]
-        #sc = ax2.plot(rfile[cdata2], 'or', picker=5, alpha=1)
+        #sc = ax2.plot(data[cdata2], 'or', picker=5, alpha=1)
         sc = ax2.plot(xdata[0:2], ydata, 'or', picker=10)[0]
+        if None not in (ylim_max, ylim_min):
+            ax2.set_ylim([ylim_min, ylim_max])
+        elif ylim_min is None:
+            ax2.set_ylim([None, ylim_max])
+        elif ylim_max is None:
+            ax2.set_ylim([ylim_min, None])
+
     if var == 'CH4':
-        line = ax2.plot(rfile[cdata1], 'b', linewidth=3, picker=5)[0]
-        ax1.plot(rfile[cdata2], 'k', linewidth=3)
+        line = ax2.plot(data[cdata1], 'b', linewidth=3, picker=5)[0]
+        ax1.plot(data[cdata2], 'k', linewidth=3)
         ax2.set_ylabel('CH4 (ppm)')
         ax1.set_ylabel('CO2 (ppm)')
         ax2.yaxis.label.set_color('b')
         ax2.spines['left'].set_color('b')
         ax2.tick_params(axis='y', which='both', colors='b')
-        xdata = rfile.index.values
+        xdata = data.index.values
         ydata = [None, None]
         sc = ax2.plot(xdata[0:2], ydata, 'or', picker=10)[0]
+        if None not in (ylim_max, ylim_min):
+            ax2.set_ylim([ylim_min, ylim_max])
+        elif ylim_min is None:
+            ax2.set_ylim([None, ylim_max])
+        elif ylim_max is None:
+            ax2.set_ylim([ylim_min, None])
 
     def add_or_remove_point(event):
         global line
@@ -65,7 +101,7 @@ def plot_select_points(rfile, var):
         xdata_a = line.get_xdata()
         ydata_a = line.get_ydata()
         global sc
-        xdata_b = sc.get_xdata()#sc.get_offsets()[:,0]
+        xdata_b = sc.get_xdata() #sc.get_offsets()[:,0]
         ydata_b = sc.get_ydata() #sc.get_offsets()[:,1]
         global xydata_b
         xydata_b = [xdata_b[2:], ydata_b[2:]]
@@ -104,17 +140,23 @@ def plot_select_points(rfile, var):
     plt.show()
     return xydata_b
 
-def plot_perflux(rfile, results, p1, cdata, path_out, lake, txtfile, date, var):
+def plot_perflux(data, results, p1, cdata, cfg):
+
+    path_out = cfg['path_out']
+    site = cfg['site']
+    lgrfile = cfg['file']
+    date = cfg['date']
+    var = cfg['variable']
 
     ## Making forlder outs if does not exist
-    path_results = os.path.join(path_out,lake,'Results','LGR')
-    path_figout = os.path.join(path_results,'Figures_'+date)
+    path_results = os.path.join(path_out, site, 'Results', 'LGR')
+    path_figout = os.path.join(path_results, 'Figures_' + date)
 
     if not os.path.exists(path_results):
         os.makedirs(path_results)
     if not os.path.exists(path_figout):
         os.makedirs(path_figout)
-    time = rfile.index.values
+    time = data.index.values
     for pt in range(len(results)):
         # Creation figures per flux
         idx1 = results['ID start'][pt]
@@ -128,22 +170,28 @@ def plot_perflux(rfile, results, p1, cdata, path_out, lake, txtfile, date, var):
         cR2 = u'R$^2$ = %0.2f' % (r_value**2)
         cf = u'$f(x)$ = %0.2E$x$ + %0.2f' % (Decimal(pol0),pol1)
         text = cf +'\n'+cR2
-        axf.plot(range(len(time[idx1:idx2+1])),rfile[cdata][idx1:idx2+1],'o',
+        axf.plot(range(len(time[idx1:idx2+1])),data[cdata][idx1:idx2+1],'o',
                 label='LRG data')
         axf.plot(range(len(time[idx1:idx2+1])),
                 p(range(len(time[idx1:idx2+1]))),'k-',label=text)
         plt.legend()
         axf.set_xlabel('Time (second)')
         axf.set_ylabel(cdata.strip())
-        figffile = var + '_' + lake + '_Flux_' + str(pt + 1) + '_' +  txtfile + '.png'
-        figf.savefig(os.path.join(path_figout,figffile), format = 'png', dpi=300)
+        figffile = var + '_' + site + '_Flux_' + str(pt + 1) + '_' +  lgrfile + '.png'
+        figf.savefig(os.path.join(path_figout, figffile), format = 'png', dpi=300)
         plt.close(figf)
     plt.close()
 
-def plot_alldata(rfile, points, path_out, lake, var, txtfile, date, cdata):
+def plot_alldata(rfile, points, cdata, cfg):
 
-    path_results = os.path.join(path_out,lake,'Results','LGR')
-    path_figout = os.path.join(path_results,'Figures_'+date)
+    path_out = cfg['path_out']
+    site = cfg['site']
+    var = cfg['variable']
+    lgrfile = cfg['file']
+    date = cfg['date']
+
+    path_results = os.path.join(path_out, site, 'Results', 'LGR')
+    path_figout = os.path.join(path_results, 'Figures_' + date)
 
     if not os.path.exists(path_results):
         os.makedirs(path_results)
@@ -160,6 +208,6 @@ def plot_alldata(rfile, points, path_out, lake, var, txtfile, date, cdata):
     ax.set_xlabel('Time')
     ax.set_ylabel(cdata)
     plt.legend()
-    figfilename = lake + '_points_' + var + '_' + txtfile+'.png'
+    figfilename = '_'.join([site,'points', var, lgrfile + '.png'])
     fig.savefig(os.path.join(path_figout, figfilename), format = 'png', dpi=300)
     plt.close()
