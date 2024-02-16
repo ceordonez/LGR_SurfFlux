@@ -54,8 +54,12 @@ def read_data(cfg):
     ifoot = footer_pos(filename)
 
     ## Reading column 0 is time, column 7 [CH4]d_ppm and column 9 [CO2]d_ppm
-    data = pd.read_csv(filename, sep=',', header=1, skipfooter=ifoot, parse_dates=[0],usecols=[0,7,9], engine='python', index_col=[0])
+    data = pd.read_csv(filename, sep=',', header=1, skipfooter=ifoot, parse_dates=[0],usecols=[0,7,9], engine='python')
     data = data.iloc[3:] # get rid off the data when LGR is turn on
+    cols = data.columns.values
+    data.columns = [item.strip() for item in cols]
+    data.Time = data.Time.dt.floor('S')
+    data.set_index('Time', inplace=True)
     return data
 
 def read_config(filename):

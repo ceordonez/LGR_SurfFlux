@@ -15,11 +15,11 @@ def main():
     data = read_data(cfg)
 
     ## STEP 2: Processing data
-    results, p1, cdata = processing_data(data, cfg)
+    results, p1 = processing_data(data, cfg)
 
-    plot_data(data, results, p1, cdata, cfg)
+    plot_data(data, results, p1, cfg)
 
-    write_excelres(data, results, cdata, cfg)
+    write_excelres(data, results, cfg)
 
 
 if __name__ == '__main__':

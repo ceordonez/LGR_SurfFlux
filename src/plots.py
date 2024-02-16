@@ -19,7 +19,7 @@ sc = []
 pts = []
 xydata_b = []
 
-def plot_data(data, results, p1, cdata, cfg):
+def plot_data(data, results, p1, cfg):
     """TODO: Docstring for plot_data.
 
     Parameters
@@ -28,15 +28,14 @@ def plot_data(data, results, p1, cdata, cfg):
     results : TODO
     p1 : TODO
     cfg : TODO
-    cdata : TODO
 
     Returns
     -------
     TODO
 
     """
-    plot_perflux(data, results, p1, cdata, cfg)
-    plot_alldata(data, results, cdata, cfg)
+    plot_perflux(data, results, p1, cfg)
+    plot_alldata(data, results, cfg)
 
 def plot_select_points(data, cfg):
 
@@ -140,13 +139,18 @@ def plot_select_points(data, cfg):
     plt.show()
     return xydata_b
 
-def plot_perflux(data, results, p1, cdata, cfg):
+def plot_perflux(data, results, p1, cfg):
 
     path_out = cfg['path_out']
     site = cfg['site']
     lgrfile = cfg['file']
     date = cfg['date']
     var = cfg['variable']
+
+    if var == 'CH4':
+        vard='[CH4]d_ppm'
+    elif var == 'CO2':
+        vard = '[CO2]d_ppm'
 
     ## Making forlder outs if does not exist
     path_results = os.path.join(path_out, site, 'Results', 'LGR')
@@ -170,25 +174,29 @@ def plot_perflux(data, results, p1, cdata, cfg):
         cR2 = u'R$^2$ = %0.2f' % (r_value**2)
         cf = u'$f(x)$ = %0.2E$x$ + %0.2f' % (Decimal(pol0),pol1)
         text = cf +'\n'+cR2
-        axf.plot(range(len(time[idx1:idx2+1])),data[cdata][idx1:idx2+1],'o',
+        axf.plot(range(len(time[idx1:idx2+1])),data[vard][idx1:idx2+1],'o',
                 label='LRG data')
         axf.plot(range(len(time[idx1:idx2+1])),
                 p(range(len(time[idx1:idx2+1]))),'k-',label=text)
         plt.legend()
         axf.set_xlabel('Time (second)')
-        axf.set_ylabel(cdata.strip())
+        axf.set_ylabel(vard)
         figffile = var + '_' + site + '_Flux_' + str(pt + 1) + '_' +  lgrfile + '.png'
         figf.savefig(os.path.join(path_figout, figffile), format = 'png', dpi=300)
         plt.close(figf)
     plt.close()
 
-def plot_alldata(rfile, points, cdata, cfg):
+def plot_alldata(data, points, cfg):
 
     path_out = cfg['path_out']
     site = cfg['site']
     var = cfg['variable']
     lgrfile = cfg['file']
     date = cfg['date']
+    if var == 'CH4':
+        vard='[CH4]d_ppm'
+    elif var == 'CO2':
+        vard = '[CO2]d_ppm'
 
     path_results = os.path.join(path_out, site, 'Results', 'LGR')
     path_figout = os.path.join(path_results, 'Figures_' + date)
@@ -197,16 +205,16 @@ def plot_alldata(rfile, points, cdata, cfg):
         os.makedirs(path_results)
     if not os.path.exists(path_figout):
         os.makedirs(path_figout)
-    time = rfile.index.values
+    time = data.index.values
 
     # Creating figure of the entire dataset of LGR file
     fig = plt.figure(figsize=(10,6))
     ax = fig.add_subplot(111)
-    ax.plot(time,rfile[cdata],linewidth=3, label='LGR data')
+    ax.plot(time, data[vard],linewidth=3, label='LGR data')
     ax.plot(points['Time start'], points['Value start (ppm)'],'ko',label='Selected points')
     ax.plot(points['Time end'], points['Value end (ppm)'],'ko')
     ax.set_xlabel('Time')
-    ax.set_ylabel(cdata)
+    ax.set_ylabel(var)
     plt.legend()
     figfilename = '_'.join([site,'points', var, lgrfile + '.png'])
     fig.savefig(os.path.join(path_figout, figfilename), format = 'png', dpi=300)

@@ -7,15 +7,15 @@ path_out: '/home/cesar/Dropbox/Cesar/PostDoc/Projects/Gambia/Data/2024/Processed
 # Site and variable to process
 #
 site: 'Gambia'
-date: '2024-01-15'
-file: 'fgga_2024-01-15_f0001'
+date: '2024-01-14'
+file: 'fgga_2024-01-14_f0000'
 variable: 'CH4'
 
 # Location features
 #
 Air:
-  Temp: 30 # Air temperture in °C
-  Pres: 1014 # Air pressure in hPa
+  Temp: 35 # Air temperture in °C
+  Pres: 1011 # Air pressure in hPa
 Chamber:
   Volume: 40 # Volume in Liters
   Area: 0.19 # Area in (m2)
