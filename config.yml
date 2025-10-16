@@ -1,26 +1,23 @@
 #
 # PATHS
-#
-path_in: '/home/cesar-ordonez/Dropbox/Cesar/PostDoc/Projects/Gambia/Data/2025/Raw/LGR'
-path_out: '/home/cesar-ordonez/Dropbox/Cesar/PostDoc/Projects/Gambia/Data/2025/Processed'
+path_in: '/home/cesar/Dropbox/Cesar/PostDoc/Projects/Gambia/Data/2025/Raw/LGR'
+# path_out: '/home/cesar/Dropbox/Cesar/PostDoc/Projects/Gambia/Data/2025/Processed'
+path_out: './TEST'
+
 
 # Site and variable to process
-#
 site: 'Gambia'
 date: '2025-01-11'
 file: 'gga_2025-01-11_f0000'
 variable: 'CO2'
 
 # Location features
-#
 Air:
   Temp: 30 # Air temperture in °C
   Pres: 1014 # Air pressure in hPa
-
 Chamber:
   Volume: 16.76 # Volume in Liters
   Area: 0.126 # Area in (m2)
-
 Plot:
   ylim_max:
   ylim_min:

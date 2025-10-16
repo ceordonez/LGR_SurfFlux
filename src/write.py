@@ -10,16 +10,16 @@ def write_excelres(data, results, cfg):
 
     path_out = cfg["path_out"]
     site = cfg["site"]
-    lgrfile = cfg["file"]
+    inputfile = cfg["file"]
     var = cfg["variable"]
 
     # Creating folder for excel results if does not exist
-    path_results = os.path.join(path_out, site, "Results", "LGR")
+    path_results = os.path.join(path_out)
     if not os.path.exists(path_results):
         os.makedirs(path_results)
 
     # Cration of excel file and perform final calculations
-    excel_filename = "_".join([var, site, "LGR", lgrfile + ".xlsx"])
+    excel_filename = "_".join([var, site, inputfile + ".xlsx"])
     excelpath = os.path.join(path_results, excel_filename)
     writer = pd.ExcelWriter(
         excelpath, datetime_format="mmm d yyyy hh:mm:ss", engine="xlsxwriter"

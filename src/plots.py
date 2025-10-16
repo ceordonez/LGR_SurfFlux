@@ -47,7 +47,6 @@ def plot_select_points(data, cfg):
 
     cdata1 = data.keys()[0]
     cdata2 = data.keys()[1]
-    pts = []
 
     # Creating plot to select points per flux
     fig = plt.figure(figsize=(15, 5))
@@ -69,7 +68,6 @@ def plot_select_points(data, cfg):
         ax1.tick_params(axis="y", which="both", colors="b")
         xdata = data.index.values
         ydata = [None, None]
-        # sc = ax2.plot(data[cdata2], 'or', picker=5, alpha=1)
         sc = ax2.plot(xdata[0:2], ydata, "or", picker=10)[0]
         if None not in (ylim_max, ylim_min):
             ax2.set_ylim([ylim_min, ylim_max])
@@ -146,7 +144,7 @@ def plot_perflux(data, results, p1, cfg):
 
     path_out = cfg["path_out"]
     site = cfg["site"]
-    lgrfile = cfg["file"]
+    inputfile = cfg["file"]
     date = cfg["date"]
     var = cfg["variable"]
 
@@ -156,7 +154,7 @@ def plot_perflux(data, results, p1, cfg):
         vard = "[CO2]d_ppm"
 
     ## Making forlder outs if does not exist
-    path_results = os.path.join(path_out, site, "Results", "LGR")
+    path_results = os.path.join(path_out, "Figures")
     path_figout = os.path.join(path_results, "Figures_" + date)
 
     if not os.path.exists(path_results):
@@ -192,7 +190,7 @@ def plot_perflux(data, results, p1, cfg):
         plt.legend()
         axf.set_xlabel("Time (second)")
         axf.set_ylabel(vard)
-        figffile = var + "_" + site + "_Flux_" + str(pt + 1) + "_" + lgrfile + ".png"
+        figffile = "_".join([var, site, "Flux", str(pt + 1), inputfile + ".png"])
         figf.savefig(os.path.join(path_figout, figffile), format="png", dpi=300)
         plt.close(figf)
     plt.close()
@@ -203,14 +201,14 @@ def plot_alldata(data, points, cfg):
     path_out = cfg["path_out"]
     site = cfg["site"]
     var = cfg["variable"]
-    lgrfile = cfg["file"]
+    inputfile = cfg["file"]
     date = cfg["date"]
     if var == "CH4":
         vard = "[CH4]d_ppm"
     elif var == "CO2":
         vard = "[CO2]d_ppm"
 
-    path_results = os.path.join(path_out, site, "Results", "LGR")
+    path_results = os.path.join(path_out, "Figures")
     path_figout = os.path.join(path_results, "Figures_" + date)
 
     if not os.path.exists(path_results):
@@ -222,7 +220,7 @@ def plot_alldata(data, points, cfg):
     # Creating figure of the entire dataset of LGR file
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(111)
-    ax.plot(time, data[vard], linewidth=3, label="LGR data")
+    ax.plot(time, data[vard], linewidth=3, label="data")
     ax.plot(
         points["Time start"], points["Value start (ppm)"], "ko", label="Selected points"
     )
@@ -230,6 +228,6 @@ def plot_alldata(data, points, cfg):
     ax.set_xlabel("Time")
     ax.set_ylabel(var)
     plt.legend()
-    figfilename = "_".join([site, "points", var, lgrfile + ".png"])
+    figfilename = "_".join([site, "points", var, inputfile + ".png"])
     fig.savefig(os.path.join(path_figout, figfilename), format="png", dpi=300)
     plt.close()

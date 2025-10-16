@@ -51,9 +51,9 @@ def read_data(cfg):
     # filename = os.path.join(path, lake, 'Data', 'LGR', date, txtfile+'.txt')
     date = cfg["date"]
     path = cfg["path_in"]
-    lgr_file = cfg["file"]
+    inputfile = cfg["file"]
 
-    filename = os.path.join(path, date, lgr_file + ".txt")
+    filename = os.path.join(path, date, inputfile + ".txt")
     ifoot = footer_pos(filename)
 
     ## Reading column 0 is time, column 7 [CH4]d_ppm and column 9 [CO2]d_ppm

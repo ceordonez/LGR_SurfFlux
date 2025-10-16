@@ -9,7 +9,7 @@ from src.write import write_excelres
 
 def main():
 
-    cfg = read_config('config_flgr.yml')
+    cfg = read_config('config.yml')
 
     ## STEP 1: Read data
     data = read_data(cfg)
